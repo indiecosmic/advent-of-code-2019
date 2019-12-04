@@ -1,0 +1,7 @@
+name: adventofcode
+channels:
+  - defaults
+dependencies:
+  - shapely
+prefix: C:\Users\Mattias\Miniconda3\envs\adventofcode
+
