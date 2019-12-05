@@ -1,4 +1,5 @@
 from math import floor
+from collections import defaultdict
 
 def increasing(value:int):
     hundred_thousand = floor(value//100000)
@@ -38,12 +39,29 @@ def contains_doubles(value:int):
         return True
     return False
 
-if __name__ == '__main__':
+def contains_strict_double(value:int):
+    numbers = str(value)
+    doubles = defaultdict(lambda:0, {})
+    for index, number in enumerate(numbers):
+        if (index == 5):
+            break
+        if (number == numbers[index+1]):
+            doubles[number] += 1
+    return 1 in doubles.values()
+
+def part1():
     numbers = range(171309,643604)
     numbers = filter(increasing, numbers)
     numbers = filter(contains_doubles, numbers)
-    """numbers = filter(not_decreasing, range(171309,643604))"""
-    """[print(n) for n in numbers]"""
-    print(len(list(numbers)))
+    return len(list(numbers))
 
-    
+def part2():
+    numbers = range(171309,643604)
+    numbers = filter(increasing, numbers)
+    numbers = filter(contains_doubles, numbers)
+    numbers = filter(contains_strict_double, numbers)
+    return len(list(numbers))
+
+if __name__ == '__main__':
+    print(part1())
+    print(part2())
