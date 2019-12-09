@@ -1,5 +1,4 @@
 import pytest
-from solutions.day7 import Intcode
 from solutions.day7 import run_combinations
 from solutions.day7 import run_feedback_combinations
 
