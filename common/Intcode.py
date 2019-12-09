@@ -62,6 +62,18 @@ class Intcode:
     def set_input(self, value):
         self.inputs += value
 
+    def set_value(self, index, mode, instructions, value):
+        if mode == 0:
+            pos = instructions[index]
+            self.extend(pos, instructions)
+            instructions[pos] = value
+        elif mode == 2:
+            pos = instructions[index] + self.relative_base
+            self.extend(pos, instructions)
+            instructions[pos] = value
+        else:
+            raise Exception('invalid mode: {}'.format(mode))
+
     def run_opcode(self, index:int, instructions: List[int]):
         op = self.get_opcode(instructions[index])
         m = self.get_mode(instructions[index])
@@ -69,18 +81,18 @@ class Intcode:
             return None
         if (op == 1):
             values = self.get_values(index, m, instructions)
-            instructions[values[2]] = values[0] + values[1]
+            self.set_value(index + 3, m[2], instructions, values[0] + values[1])
             return index + 4
         elif (op == 2):
             values = self.get_values(index, m, instructions)
             self.extend(values[0], instructions)
             self.extend(values[1], instructions)
             self.extend(values[2], instructions)
-            instructions[values[2]] = values[0] * values[1]
+            self.set_value(index + 3, m[2], instructions, values[0] * values[1])
             return index + 4
         elif (op == 3):
-            target = instructions[index+1]
-            instructions[target] = self.get_input()
+            input = self.get_input()
+            self.set_value(index + 1, m[0], instructions, input)
             return index + 2
         elif op == 4:
             value = self.get_value(index + 1, m[0], instructions)
@@ -98,12 +110,14 @@ class Intcode:
             return index + 3
         elif op == 7:
             values = self.get_values(index, m, instructions)
-            instructions[values[2]] = 1 if values[0] < values[1] else 0
+            value = 1 if values[0] < values[1] else 0
+            self.set_value(index + 3, m[2], instructions, value)
             return index + 4
         elif op == 8:
             values = self.get_values(index, m, instructions)
             self.extend(values[2], instructions)
-            instructions[values[2]] = 1 if values[0] == values[1] else 0
+            value = 1 if values[0] == values[1] else 0
+            self.set_value(index + 3, m[2], instructions, value)
             return index + 4
         elif op == 9:
             param1 = self.get_value(index + 1, m[0], instructions)

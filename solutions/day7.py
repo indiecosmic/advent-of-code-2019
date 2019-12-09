@@ -1,7 +1,7 @@
 from typing import List
 from math import floor
 from itertools import permutations
-from solutions.Intcode import Intcode
+from common.Intcode import Intcode
 
 def create_phase_settings(phase_settings):
     return permutations(phase_settings)
