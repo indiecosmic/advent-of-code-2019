@@ -2,7 +2,7 @@ from math import floor
 from typing import List
 
 class Intcode:
-    def __init__(self, instructions: List[int], inputs: List[int]):
+    def __init__(self, instructions: List[int], inputs: List[int], allow_grow: bool = False):
         self.instructions = instructions.copy()
         self.current_instruction = 0
         self.inputs = inputs
@@ -10,6 +10,8 @@ class Intcode:
         self.current_input = 0
         self.halted = False
         self.stopped = False
+        self.relative_base = 0
+        self.allow_grow = allow_grow
 
     def get_opcode(self, value:int):
         return int(str(value)[-2:])
@@ -17,18 +19,33 @@ class Intcode:
     def get_mode(self, value:int):
         return (floor(value//100) % 10, floor(value//1000) % 10, floor(value//10000) % 10)
 
+    def extend(self, index, instructions):
+        if not self.allow_grow:
+            return
+        if (index >= len(instructions)):
+                instructions.extend([0]*(index + 1 - len(instructions)))
+
     def get_values(self, index, modes, instructions: List[int]):
-        pos1 = instructions[index+1]
-        pos2 = instructions[index+2]
-        target = instructions[index+3]
-        val1 = instructions[pos1] if modes[0] == 0 else pos1
-        val2 = instructions[pos2] if modes[1] == 0 else pos2
+        val1 = self.get_value(index + 1, modes[0], instructions)
+        val2 = self.get_value(index + 2, modes[1], instructions)
+        target = self.get_value(index + 3, 1, instructions)
         return (val1, val2, target)
 
     def get_value(self, index, mode, instructions):
-        pos = instructions[index]
-        return instructions[pos] if mode == 0 else pos
-    
+        if mode == 0:
+            pos = instructions[index]
+            self.extend(pos, instructions)
+            return instructions[pos]
+        elif mode == 1:
+            self.extend(index, instructions)
+            return instructions[index]
+        elif mode == 2:
+            pos = instructions[index] + self.relative_base
+            self.extend(pos, instructions)
+            return instructions[pos]
+        else:
+            raise Exception('invalid mode: {}'.format(mode))
+
     def get_input(self):
         if self.current_input >= len(self.inputs):
             raise Exception('Waiting for input')
@@ -56,6 +73,9 @@ class Intcode:
             return index + 4
         elif (op == 2):
             values = self.get_values(index, m, instructions)
+            self.extend(values[0], instructions)
+            self.extend(values[1], instructions)
+            self.extend(values[2], instructions)
             instructions[values[2]] = values[0] * values[1]
             return index + 4
         elif (op == 3):
@@ -82,8 +102,13 @@ class Intcode:
             return index + 4
         elif op == 8:
             values = self.get_values(index, m, instructions)
+            self.extend(values[2], instructions)
             instructions[values[2]] = 1 if values[0] == values[1] else 0
             return index + 4
+        elif op == 9:
+            param1 = self.get_value(index + 1, m[0], instructions)
+            self.relative_base += param1
+            return index + 2
         else:
             raise Exception('invalid opcode: {}'.format(op))
 

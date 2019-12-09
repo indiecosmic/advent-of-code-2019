@@ -1,10 +1,13 @@
+from .Intcode import Intcode
 
-
+def part1(instructions):
+    intcode = Intcode(instructions, [1], True)
+    intcode.run_program()
+    return intcode.outputs
 
 if __name__ == "__main__":
-    pass
-    """with open('day9.txt') as f:
+    with open('day9.txt') as f:
         contents = f.read()
-        layers = create_layers(contents, 25, 6)
-        print(part1(layers))
-        print(part2(layers, 25, 6))"""
+        program_str = contents.strip().split(',')
+        instructions = list(map(int, program_str))
+        print(part1(instructions))
