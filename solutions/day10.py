@@ -1,6 +1,9 @@
 from typing import List
+from typing import Tuple
 from math import sqrt
 from math import isclose
+from timeit import timeit
+from collections import namedtuple
 
 def parse_map(input: str):
     return input.split('\n')
@@ -20,15 +23,24 @@ def can_detect(position, target, asteroids):
             continue
         if o[1] < min(position[1], target[1]) or o[1] > max(position[1], target[1]):
             continue
-        if is_between(position, o, target):
+        if is_on(position, target, o):
             return False
     return True
 
-def distance(a,b):
-    return sqrt((a[0] - b[0])**2 + (a[1] - b[1])**2)
+def is_on(a:Tuple[int,int], b:Tuple[int,int], c:Tuple[int,int]):
+    "Return true iff point c intersects the line segment from a to b."
+    # (or the degenerate case that all 3 points are coincident)
+    return (collinear(a, b, c)
+            and (within(a[0], c[0], b[0]) if a[0] != b[0] else
+                 within(a[1], c[1], b[1])))
 
-def is_between(a,c,b):
-    return isclose(distance(a,c) + distance(c,b), distance(a,b))
+def collinear(a:Tuple[int,int], b:Tuple[int,int], c:Tuple[int,int]):
+    "Return true iff a, b, and c all lie on the same line."
+    return (b[0] - a[0]) * (c[1] - a[1]) == (c[0] - a[0]) * (b[1] - a[1])
+
+def within(p, q, r):
+    "Return true iff q is between p and r (inclusive)."
+    return p <= q <= r or r <= q <= p
 
 def find_best_location(asteroids):
     max = 0
