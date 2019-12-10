@@ -34,3 +34,28 @@ def test_can_detect(position, target, asteroids, expected):
 ])
 def test_find_best_location(asteroids, expected):
     assert find_best_location(asteroids) == expected
+
+def test_find_best_location_from_map():
+    input = str('.#..##.###...#######\n'
+                '##.############..##.\n'
+                '.#.######.########.#\n'
+                '.###.#######.####.#.\n'
+                '#####.##.#.##.###.##\n'
+                '..#####..#.#########\n'
+                '####################\n'
+                '#.####....###.#.#.##\n'
+                '##.#################\n'
+                '#####.##.###..####..\n'
+                '..######..##.#######\n'
+                '####.##.####...##..#\n'
+                '.#####..#.######.###\n'
+                '##...#.##########...\n'
+                '#.##########.#######\n'
+                '.####.#.###.###.#.##\n'
+                '....##.##.###..#####\n'
+                '.#.#.###########.###\n'
+                '#.#.#.#####.####.###\n'
+                '###.##.####.##.#..##')
+    map = parse_map(input)
+    asteroids = find_coordinates(map)
+    assert find_best_location(asteroids) == ((11,13), 210)
