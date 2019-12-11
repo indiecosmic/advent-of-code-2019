@@ -39,7 +39,30 @@ def part2(instructions):
             intcode.set_input(panels[pos])
         else:
             intcode.set_input(0)
-    return panels
+
+    xmin,ymin,xmax,ymax = 0,0,0,0
+    for point in panels:
+        if point.x < xmin:
+            xmin = point.x
+        if point.x > xmax:
+            xmax = point.x
+        if point.y < ymin:
+            ymin = point.y
+        if point.y > ymax:
+            ymax = point.y
+
+    for y in range(ymax+1, ymin-1, -1):
+        row = ''
+        for x in range(xmin-1, xmax+1):
+            pos = Point(x,y)
+            if pos in panels:
+                row += ' ' if panels[pos] == 0 else '1'
+            else:
+                row += ' '
+        print(row)
+
+
+
 
 def main():
     path = os.path.join(os.path.dirname(__file__), 'day11.txt')
@@ -48,7 +71,7 @@ def main():
         program_str = contents.strip().split(',')
         instructions = list(map(int, program_str))
         print(part1(instructions))
-        print(part2(instructions))
+        part2(instructions)
 
 if __name__ == "__main__":
     main()
