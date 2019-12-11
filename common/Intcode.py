@@ -8,6 +8,7 @@ class Intcode:
         self.inputs = inputs
         self.outputs = []
         self.current_input = 0
+        self.current_output = 0
         self.halted = False
         self.stopped = False
         self.relative_base = 0
@@ -52,6 +53,13 @@ class Intcode:
         input = self.inputs[self.current_input]
         self.current_input += 1
         return input
+    
+    def get_output(self):
+        if self.current_output >= len(self.outputs):
+            raise Exception('Out of output bounds')
+        output = self.outputs[self.current_output]
+        self.current_output += 1
+        return output
 
     def should_wait_for_input(self):
         return True if self.current_input >= len(self.inputs) else False
@@ -60,7 +68,10 @@ class Intcode:
         self.outputs.append(value)
     
     def set_input(self, value):
-        self.inputs += value
+        if type(value) is list:
+            self.inputs += value
+        else:
+            self.inputs.append(value)
 
     def set_value(self, index, mode, instructions, value):
         if mode == 0:
@@ -128,6 +139,7 @@ class Intcode:
 
     def run_program(self):
         self.outputs = []
+        self.current_output = 0
         self.halted = False
         while self.current_instruction < len(self.instructions):
             op = self.get_opcode(self.instructions[self.current_instruction])
