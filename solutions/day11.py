@@ -1,9 +1,6 @@
 import os
-from collections import namedtuple
 from common.Intcode import Intcode
-
-Point = namedtuple('Point',['x','y'])
-
+from common.Point import Point
 
 def part1(instructions):
     intcode = Intcode(instructions, [0], True)

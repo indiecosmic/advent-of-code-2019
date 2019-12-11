@@ -3,9 +3,7 @@ from typing import Tuple
 from math import sqrt
 from math import isclose
 from math import atan2, degrees
-from collections import namedtuple
-
-Point = namedtuple('Point', ['x', 'y'])
+from common.Point import Point
 
 def parse_map(input: str):
     return input.split('\n')
