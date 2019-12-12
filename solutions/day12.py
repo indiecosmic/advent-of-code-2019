@@ -17,15 +17,14 @@ class Moon:
 def apply_gravity(moons: List[Moon]):
     for moon in moons:
         others = set(moons) - set([moon])
-        for other in others:
-            dx = 1 if moon.pos.x < other.pos.x else 0
-            dx = -1 if moon.pos.x > other.pos.x else dx
-            dy = 1 if moon.pos.y < other.pos.y else 0
-            dy = -1 if moon.pos.y > other.pos.y else dy
-            dz = 1 if moon.pos.z < other.pos.z else 0
-            dz = -1 if moon.pos.z > other.pos.z else dz
-            moon.vel = Point3D(
-                moon.vel.x + dx, moon.vel.y + dy, moon.vel.z + dz)
+        diff = [0,0,0]
+        for axis in range(3):
+            for other in others:
+                if moon.pos[axis] < other.pos[axis]:
+                    diff[axis] += 1
+                if moon.pos[axis] > other.pos[axis]:
+                    diff[axis] -= 1
+        moon.vel = Point3D(moon.vel.x + diff[0], moon.vel.y + diff[1], moon.vel.z + diff[2])
     return moons
 
 
