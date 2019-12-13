@@ -3,7 +3,7 @@ from common.Intcode import Intcode
 from common.Point import Point
 
 def part1(instructions):
-    intcode = Intcode(instructions, [0], True)
+    intcode = Intcode(instructions, [0])
     pos = Point(0,0)
     dir = Point(0,1)
     panels = {}
@@ -21,7 +21,7 @@ def part1(instructions):
     return len(panels)
 
 def part2(instructions):
-    intcode = Intcode(instructions, [1], True)
+    intcode = Intcode(instructions, [1])
     pos = Point(0,0)
     dir = Point(0,1)
     panels = {}
