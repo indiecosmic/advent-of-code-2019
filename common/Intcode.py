@@ -3,7 +3,7 @@ from typing import List
 from collections import defaultdict
 
 class Intcode:
-    def __init__(self, instructions: List[int], inputs: List[int], allow_grow: bool = False):
+    def __init__(self, instructions: List[int], inputs: List[int]):
         self.memory = defaultdict(lambda: 0, enumerate(instructions))
         self.ptr = 0
         self.inputs = inputs
@@ -13,7 +13,6 @@ class Intcode:
         self.halted = False
         self.stopped = False
         self.relative_base = 0
-        self.allow_grow = allow_grow
 
     def get_opcode(self):
         return self.memory[self.ptr] % 100
