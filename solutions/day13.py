@@ -10,14 +10,24 @@ def create_state(input):
         tiles[Point(input[index],input[index+1])] = input[index+2]
     return tiles
 
-def handle_input(computer):
-    inp = input()
+def handle_input(computer, state):
+    """input()"""
+    ball_tile = [k for k,v in state.items() if v == 4]
+    paddle_tile = [k for k,v in state.items() if v == 3]
+    if ball_tile[0].x < paddle_tile[0].x:
+        computer.set_input(-1)
+    elif ball_tile[0].x > paddle_tile[0].x:
+        computer.set_input(1)
+    else:
+        computer.set_input(0)
+    """
     if inp == '1':
         computer.set_input(-1)
     if inp == '':
         computer.set_input(0)
     if inp == '2':
         computer.set_input(1)
+    """
 
 def update(computer, state):
     computer.run_program()
@@ -60,10 +70,10 @@ def part2(instructions):
     state = create_state(computer.outputs)
     render(computer, state)
     while computer.stopped == False:
-        handle_input(computer)
+        handle_input(computer, state)
         update(computer, state)
         render(computer, state)
-    pass
+    render(computer, state)
 
 def get_input():
     file_path = os.path.join(os.path.dirname(__file__), 'day13.txt')
@@ -76,7 +86,7 @@ def get_input():
 def main():
     instructions = get_input()
     print(part1(instructions))
-    print(part2(instructions))
+    part2(instructions)
 
 if __name__ == "__main__":
     main()
