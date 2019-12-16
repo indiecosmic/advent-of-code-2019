@@ -1,4 +1,4 @@
-from solutions.day15 import main
+from solutions.day16 import main
 
 if __name__ == "__main__":
     main()
