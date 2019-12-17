@@ -2,6 +2,21 @@ import os
 from common.Intcode import Intcode
 from common.Point import Point
 
+def render(map):
+    x_min = min([key.x for key in map])
+    x_max = max([key.x for key in map])
+    y_min = min([key.y for key in map])
+    y_max = max([key.y for key in map])
+    print(x_min, x_max, y_min, y_max)
+    for y in range(y_min, y_max + 1):
+        row = ''
+        for x in range(x_min, x_max + 1):
+            if (x,y) not in map:
+                row += ' '
+            else:
+                row += map[(x,y)]
+        print(row)
+
 def is_intersection(pos: Point, map):
     neighbours = get_connected_tiles(pos, map)
     if len(neighbours) < 4:
@@ -35,7 +50,8 @@ def part1(instructions):
             x = 0
         else:
             map[Point(x, y)] = chr(o)
-        x += 1
+            x += 1
+    render(map)
     scaffolds = [key  for (key, value) in map.items() if value in ['#','^','v','<','>']]
     intersections = []
     for s in scaffolds:
