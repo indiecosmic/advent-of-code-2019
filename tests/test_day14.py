@@ -27,13 +27,24 @@ from solutions.day14 import get_needed_ore
         '5 B, 7 C => 1 BC\n'
         '4 C, 1 A => 1 CA\n'
         '2 AB, 3 BC, 4 CA => 1 FUEL\n'), 165),
+    ('FUEL', 1, str(
+        '2 VPVL, 7 FWMGM, 2 CXFTF, 11 MNCFX => 1 STKFG\n'
+        '17 NVRVD, 3 JNWZP => 8 VPVL\n'
+        '53 STKFG, 6 MNCFX, 46 VJHF, 81 HVMC, 68 CXFTF, 25 GNMV => 1 FUEL\n'
+        '22 VJHF, 37 MNCFX => 5 FWMGM\n'
+        '139 ORE => 4 NVRVD\n'
+        '144 ORE => 7 JNWZP\n'
+        '5 MNCFX, 7 RFSQX, 2 FWMGM, 2 VPVL, 19 CXFTF => 3 HVMC\n'
+        '5 VJHF, 7 MNCFX, 9 VPVL, 37 CXFTF => 6 GNMV\n'
+        '145 ORE => 6 MNCFX\n'
+        '1 NVRVD => 8 CXFTF\n'
+        '1 VJHF, 6 MNCFX => 4 RFSQX\n'
+        '176 ORE => 6 VJHF'), 180697)
     ])
 def test_get_reactions(chemical, amount, input, expected):
     cookbook = create_cookbook(input)
-    result = []
-    waste = {}
-    get_reactions(chemical, amount, cookbook, result, waste)
-    ore_required = waste['ORE']
+    needed = get_reactions(chemical, amount, cookbook)
+    ore_required = needed['ORE']
     assert ore_required == expected
 
 @pytest.mark.parametrize("chemical,amount,input,expected", [

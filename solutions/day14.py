@@ -28,27 +28,35 @@ def get_needed_ore(required, cookbook):
                 sum += (ceil(a/recipe.output) * comp.count)
     return sum
 
-def get_reactions(chemical, amount, cookbook, reaction_list, waste):
-    if chemical in waste:
-        if waste[chemical] >= amount:
-            waste[chemical] -= amount
-            return
+def get_reactions(chemical, amount, cookbook, store = {}):
+    if chemical in store:
+        if store[chemical] >= amount:
+            store[chemical] -= amount
+            return {}
         else:
-            amount -= waste[chemical]
-            waste[chemical] = 0
-    else:
-        waste[chemical] = 0
-
+            amount -= store[chemical]
+            store[chemical] = 0
+    
     if chemical not in cookbook:
-        waste[chemical] += amount
-        reaction_list.append(amount)
-        return
+        return {chemical: amount}
+
+    needed = {}
     recipe = cookbook[chemical]
     multiplier = ceil(amount/recipe.output)
-
-    waste[chemical] += recipe.output % amount
     for component in recipe.components:
-        get_reactions(component.chemical, component.count * multiplier, cookbook, reaction_list, waste)
+        component_reqs = get_reactions(component.chemical, component.count * multiplier, cookbook, store)
+        for c in component_reqs:
+            if c in needed:
+                needed[c] += component_reqs[c]
+            else:
+                needed[c] = component_reqs[c]
+    if chemical not in store:
+        store[chemical] = recipe.output * multiplier
+        store[chemical] -= amount
+    else:
+        store[chemical] += recipe.output * multiplier - amount
+    return needed
+
 
 def create_cookbook(input: str):
     lines = input.splitlines()
@@ -70,9 +78,8 @@ def get_input():
 
 def part1(input: str):
     cookbook = create_cookbook(input)
-    required = {}
-    get_needed_ingredients('FUEL', 1, cookbook, required)
-    return get_needed_ore(required, cookbook)
+    needed = get_reactions('FUEL', 1, cookbook)
+    return needed['ORE']
 
 def main():
     input = get_input()
