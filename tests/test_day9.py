@@ -7,6 +7,6 @@ from common.Intcode import Intcode
     ([104,1125899906842624,99], [0], [1125899906842624])
 ])
 def test_run_program(instructions, inputs, expected):
-    intcode = Intcode(instructions, inputs, True)
+    intcode = Intcode(instructions, inputs)
     intcode.run_program()
     assert intcode.outputs == expected
