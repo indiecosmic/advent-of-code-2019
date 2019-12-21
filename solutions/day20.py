@@ -70,6 +70,13 @@ def create_map(input: List[str]) -> Dict[Point, Tile]:
     return map
 
 
+def get_start_and_finish(map):
+    portals = [v for k, v in map.items() if v.type in [
+        Type.START, Type.FINISH]]
+    return (portals[0].portal_pos, portals[1].portal_pos) if portals[0].type == Type.START else (portals[1].portal_pos, portals[0].portal_pos)
+
+
+# Part 1
 def shortest_path(source: Point, target: Point, map):
     dist = {}
     q = PriorityQueue()
@@ -87,12 +94,6 @@ def shortest_path(source: Point, target: Point, map):
                 dist[v] = dist[u] + 1
                 q.put((dist[v], v))
     return dist[target]
-
-
-def get_start_and_finish(map):
-    portals = [v for k, v in map.items() if v.type in [
-        Type.START, Type.FINISH]]
-    return (portals[0].portal_pos, portals[1].portal_pos) if portals[0].type == Type.START else (portals[1].portal_pos, portals[0].portal_pos)
 
 
 def get_connected_tiles(pos: Point, map):
@@ -126,10 +127,13 @@ def get_input() -> List[str]:
         contents = f.read()
         contents = contents.splitlines()
         return contents
+
+
 def part1(map):
     start, finish = get_start_and_finish(map)
     shortest = shortest_path(start, finish, map)
     print(shortest)
+
 
 if __name__ == "__main__":
     input = get_input()
