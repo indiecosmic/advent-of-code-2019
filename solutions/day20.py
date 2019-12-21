@@ -24,6 +24,7 @@ class Tile:
             self.portal_pos = None
             self.target_pos = None
             self.portal_name = ''
+            self.inner = None
         elif symbol == '#':
             self.type = Type.WALL
         elif symbol == '.':
@@ -63,10 +64,18 @@ def create_map(input: List[str]) -> Dict[Point, Tile]:
             current.type = Type.START
         elif current.portal_name == 'ZZ':
             current.type = Type.FINISH
+    
+    height = len(input)
+    width = len(input[0])
     for portal in [v for k, v in map.items() if v.type == Type.PORTAL]:
         targets = [v for k, v in map.items() if v.type == Type.PORTAL and v.portal_name ==
                    portal.portal_name and v.portal_pos != portal.portal_pos]
         portal.target_pos = targets[0].portal_pos
+        if (portal.portal_pos.x in [2, width - 3] or
+            portal.portal_pos.y in [2, height - 3]):
+            portal.inner = False
+        else:
+            portal.inner = True
 
     return map
 
@@ -98,8 +107,8 @@ def shortest_path(source: Point, target: Point, map):
     count = 0
     while not q.empty():
         _, u = q.get()
-        if u == target:
-            break
+        if dist[u] > dist[target]:
+            continue
         for v in get_connected_tiles(u, map):
             if dist[v] > dist[u] + 1:
                 dist[v] = dist[u] + 1
