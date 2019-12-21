@@ -1,5 +1,6 @@
 import os
 from enum import Enum
+from math import sqrt
 from typing import List, Dict
 from queue import PriorityQueue
 from string import ascii_uppercase
@@ -76,7 +77,16 @@ def get_start_and_finish(map):
     return (portals[0].portal_pos, portals[1].portal_pos) if portals[0].type == Type.START else (portals[1].portal_pos, portals[0].portal_pos)
 
 
+def manhattan_distance(a: Point, b: Point):
+    return abs(a.x - b.x) + abs(a.y - b.y)
+
+
+def euclidean_distance(a: Point, b: Point):
+    return sqrt((a.x-b.x)**2 + (a.y-b.y)**2)
+
 # Part 1
+
+
 def shortest_path(source: Point, target: Point, map):
     dist = {}
     q = PriorityQueue()
@@ -85,6 +95,7 @@ def shortest_path(source: Point, target: Point, map):
         dist[tile] = maxsize
     q.put((0, source))
     dist[source] = 0
+    count = 0
     while not q.empty():
         _, u = q.get()
         if u == target:
@@ -92,11 +103,14 @@ def shortest_path(source: Point, target: Point, map):
         for v in get_connected_tiles(u, map):
             if dist[v] > dist[u] + 1:
                 dist[v] = dist[u] + 1
-                q.put((dist[v], v))
+                h = dist[v] + euclidean_distance(v, target)
+                q.put((h, v))
+        count += 1
+    print('Tiles expanded:', count)
     return dist[target]
 
 
-def get_connected_tiles(pos: Point, map):
+def get_connected_tiles(pos: Point, map) -> List[Point]:
     connected = []
     adjacent = get_adjacent_tiles(pos, map)
     for a in adjacent:
