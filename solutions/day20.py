@@ -80,6 +80,8 @@ def shortest_path(source: Point, target: Point, map):
     dist[source] = 0
     while not q.empty():
         _, u = q.get()
+        if u == target:
+            break
         for v in get_connected_tiles(u, map):
             if dist[v] > dist[u] + 1:
                 dist[v] = dist[u] + 1
